@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIBRING-C | Libros electrónicos</title>
+
+<style>
+:root {
+    --navy: #173b57;
+    --blue: #245d7a;
+    --gold: #e9b44c;
+    --bg: #fffaf1;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font: 16px/1.5 Arial, sans-serif;
+    background: var(--bg);
+    color: #263442;
+}
+
+header, footer {
+    background: #102d43;
+    color: white;
+    padding: 18px 5%;
+}
+
+header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background-color: #08090d;
+    background-image: url("imagenes/fondo-encabezado.jpg");
+    background-size: cover;
+    background-position: center;
+    border-bottom: 2px solid var(--gold);
+}
+
+.bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo img {
+    display: block;
+    width: 150px;
+    max-height: 72px;
+    object-fit: contain;
+}
+
+nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+nav a {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 24px;
+    text-decoration: none;
+    font-weight: bold;
+    background: #087fe7;
+    color: white;
+}
+
+nav a:nth-child(2) { background: #7b35e7; }
+nav a:nth-child(3) { background: #d99a00; }
+nav a:nth-child(4) { background: #00a968; }
+nav a:nth-child(5) { background: #ec2874; }
+
+nav a:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.12);
+}
+
+.hero {
+    padding: 48px 6%;
+    background-color: #172a38;
+    background-image:
+        linear-gradient(90deg, rgba(12,13,17,.90), rgba(12,13,17,.55)),
+        url("imagenes/fondo-principal.jpg");
+    background-size: cover;
+    background-position: center;
+    color: white;
+}
+
+.hero h1 {
+    color: white;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.1;
+    max-width: 750px;
+}
+
+.hero p {
+    color: #f6f1e8;
+}
+
+section {
+    padding: 38px 5%;
+    scroll-margin-top: 90px;
+}
+
+.heading {
+    text-align: center;
+    color: var(--navy);
+    font-size: 2rem;
+    margin: 0;
+}
+
+.sub {
+    text-align: center;
+    max-width: 760px;
+    margin: 8px auto 22px;
+    color: #596875;
+}
+
+.btn, button {
+    display: inline-block;
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.primary {
+    background: var(--blue);
+    color: white;
+}
+
+.gold {
+    background: var(--gold);
+    color: #222;
+}
+
+.light {
+    background: #e7eff3;
+    color: var(--navy);
+}
+
+.danger {
+    background: #f7e3e3;
+    color: #a83333;
+}
+
+.tools {
+    display: flex;
+    gap: 10px;
+    max-width: 1000px;
+    margin: 0 auto 18px;
+    flex-wrap: wrap;
+}
+
+.tools input {
+    flex: 2;
+    min-width: 200px;
+}
+
+.tools select {
+    flex: 1;
+    min-width: 160px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #c8d3dc;
+    border-radius: 8px;
+    font: inherit;
+}
+
+.genres {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.genres a {
+    padding: 6px 10px;
+    background: #e7eff3;
+    border-radius: 20px;
+    text-decoration: none;
+    color: var(--navy);
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.book, .panel {
+    background: white;
+    border: 1px solid #e0e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px #0000000b;
+}
+
+.cover {
+    height: 220px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #d9e7ee, #f6ead1);
+    overflow: hidden;
+    font-size: 3rem;
+}
+
+.cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.info {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    min-height: 290px;
+}
+
+.info h3 {
+    margin: 0;
+    color: var(--navy);
+    font-size: 1.05rem;
+}
+
+.description {
+    font-size: .92rem;
+    line-height: 1.45;
+    color: #555;
+    margin: .45rem 0 .7rem;
+}
+
+.muted {
+    color: #66737d;
+    font-size: .9rem;
+}
+
+.tag {
+    display: inline-block;
+    background: #edf3f6;
+    border-radius: 20px;
+    padding: 3px 8px;
+    font-size: .8rem;
+    align-self: start;
+}
+
+.price {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+    margin-top: auto;
+    flex-wrap: wrap;
+}
+
+.actions button {
+    flex: 1;
+    padding: 9px 5px;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    max-width: 1100px;
+    margin: auto;
+}
+
+.panel {
+    padding: 20px;
+}
+
+.panel h3 {
+    margin-top: 0;
+    color: var(--navy);
+}
+
+.cartrow {
+    padding: 10px 0;
+    border-bottom: 1px solid #e5ecef;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+}
+
+.cartrow button {
+    padding: 5px 9px;
+}
+
+.total {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--navy);
+}
+
+.formgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.full {
+    grid-column: 1 / -1;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    font-size: .9rem;
+    margin-bottom: 4px;
+}
+
+.notice {
+    background: #fff4d9;
+    border-left: 4px solid var(--gold);
+    padding: 12px;
+    border-radius: 5px;
+}
+
+.qr {
+    border: 2px dashed #b9c8d1;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    background: #f8fbfc;
+}
+
+.qr img {
+    max-width: 340px;
+    width: 100%;
+    height: auto;
+    margin: 12px auto;
+}
+
+.review {
+    background: #f1f5f7;
+    border-radius: 8px;
+    padding: 12px;
+    margin-top: 10px;
+}
+
+.empty {
+    text-align: center;
+    background: white;
+    padding: 25px;
+    grid-column: 1 / -1;
+}
+
+.float {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background: #168b53;
+    color: white;
+    text-decoration: none;
+    padding: 12px 16px;
+    border-radius: 30px;
+    z-index: 5;
+    font-weight: bold;
+}
+
+@media (max-width: 950px) {
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 650px) {
+    header {
+        position: static;
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .split {
+        grid-template-columns: 1fr;
+    }
+
+    .formgrid {
+        grid-template-columns: 1fr;
+    }
+
+    .full {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 420px) {
+    .grid {
+ grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ENCABEZADO Y LOGO -->
+<header>
+    <div class="bar">
+        <a class="logo" href="#inicio" aria-label="LIBRING-C inicio">
+            <!-- CAMBIA logo.png POR EL NOMBRE DE TU IMAGEN -->
+            <img src="logo.jpg" alt="Logo LIBRING-C">
+        </a>
+
+        <nav>
+            <a href="#catalogo">Catálogo</a>
+            <a href="#carrito">Carrito (<span id="count">0</span>)</a>
+            <a href="#comprar">Pedido y pago</a>
+            <a href="#contacto">Contacto</a>
+            <a href="#opiniones">Opiniones</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<!-- PORTADA PRINCIPAL -->
+<section class="hero" id="inicio">
+    <p><b>BIENVENIDO A LIBRING-C</b></p>
+
+    <h1>Tu próxima lectura empieza aquí.</h1>
+
+    <p>
+        Descubre libros electrónicos de distintos géneros,
+        consulta los títulos y realiza tu pedido de forma sencilla.
+        Atención directa por WhatsApp y método de pago mediante QR.
+    </p>
+
+    <a class="btn primary" href="#catalogo">Explorar catálogo</a>
+    <a class="btn gold" href="#comprar">Cómo comprar</a>
+</section>
+
+<!-- CATÁLOGO -->
+<section id="catalogo">
+    <h2 class="heading">Catálogo de libros</h2>
+
+    <p class="sub">
+        Encuentra novelas, romance, misterio, ciencia ficción,
+        fantasía, historia, educación y terror.
+        Para colocar una portada, escribe su nombre en el campo
+        imagen de cada libro en el código.
+    </p>
+
+    <div class="tools">
+        <input
+            id="search"
+            placeholder="Buscar por título o autor..."
+            aria-label="Buscar libros"
+        >
+
+        <select id="genre">
+            <option value="">Todos los géneros</option>
+            <option>Novela</option>
+            <option>Romance</option>
+            <option>Misterio</option>
+            <option>Ciencia ficción</option>
+            <option>Fantasía</option>
+            <option>Historia</option>
+            <option>Educación</option>
+            <option>Terror</option>
+        </select>
+    </div>
+
+    <div class="genres">
+        <a href="#catalogo" data-g="">Todos</a>
+        <a href="#catalogo" data-g="Novela">Novela</a>
+        <a href="#catalogo" data-g="Romance">Romance</a>
+        <a href="#catalogo" data-g="Misterio">Misterio</a>
+        <a href="#catalogo" data-g="Ciencia ficción">Ciencia ficción</a>
+        <a href="#catalogo" data-g="Fantasía">Fantasía</a>
+        <a href="#catalogo" data-g="Historia">Historia</a>
+        <a href="#catalogo" data-g="Educación">Educación</a>
+        <a href="#catalogo" data-g="Terror">Terror</a>
+    </div>
+
+    <!-- AQUÍ APARECERÁN LOS LIBROS AUTOMÁTICAMENTE -->
+    <div class="grid" id="books"></div>
+</section>
+
+<!-- CARRITO Y PEDIDO -->
+<section id="carrito" style="background:#edf3f6">
+    <h2 class="heading">Carrito de compras</h2>
+
+    <p class="sub">
+        Revisa tu pedido, ajusta las cantidades y elige cómo quieres pagar.
+    </p>
+
+    <div class="split">
+        <div class="panel">
+            <h3>Libros seleccionados</h3>
+
+            <div id="cartitems">
+                <p class="muted">Todavía no agregaste libros.</p>
+            </div>
+
+            <p class="total">
+                Total: <span id="total">Bs 0</span>
+            </p>
+
+            <button class="light" id="clear">Vaciar carrito</button>
+        </div>
+
+        <div class="panel" id="comprar">
+            <h3>Datos del pedido</h3>
+
+            <p class="muted">
+                Elige QR para ver el código aquí mismo.
+                Para otros pagos, se abrirá WhatsApp para coordinar.
+            </p>
+
+            <form id="order">
+                <div class="formgrid">
+                    <div>
+                        <label for="name">Nombre completo *</label>
+                        <input id="name" required maxlength="100">
+                    </div>
+
+                    <div>
+                        <label for="phone">Tu teléfono (opcional)</label>
+                        <input id="phone" maxlength="25">
+                    </div>
+
+                    <div class="full">
+                        <label for="email">Correo (opcional)</label>
+                        <input id="email" type="email" maxlength="120">
+                    </div>
+
+                    <div class="full">
+                        <label for="payment">Método de pago digital *</label>
+                        <select id="payment" required>
+                            <option value="QR">Código QR</option>
+                            <option value="Transferencia bancaria">Transferencia bancaria</option>
+                            <option value="Billetera móvil">Billetera móvil</option>
+                        </select>
+                    </div>
+
+                    <div class="full">
+                        <label for="note">Nota (opcional)</label>
+                        <textarea id="note" rows="3" maxlength="500"></textarea>
+                    </div>
+                </div>
+
+                <p class="notice" id="hint">
+                    Agrega al menos un libro al carrito.
+                </p>
+
+                <button class="primary" type="submit">
+                    Enviar pedido por QR / pago digital
+                </button>
+            </form>
+
+            <!-- IMAGEN DEL QR: CAMBIA qr-pago.png POR TU ARCHIVO -->
+            <div class="qr" id="qrpanel" hidden style="margin-top:18px">
+                <h3>Pago por QR</h3>
+                <p>Escanea este código con tu aplicación de pago.</p>
+
+                <img
+                    src="imagenes/qr-pago.png"
+                    alt="Código QR de pago"
+                >
+
+                <p class="muted">
+                    Verifica el monto en tu aplicación antes de confirmar
+                    y guarda tu comprobante.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACTO -->
+<section id="contacto" style="background:#edf3f6">
+    <h2 class="heading">Contacto</h2>
+
+    <p class="sub">
+        Estamos para ayudarte con tus dudas y pedidos.
+    </p>
+
+    <div class="split">
+        <div class="panel">
+            <h3>WhatsApp</h3>
+            <p>Número: <b>67630283</b></p>
+
+            <a
+                class="btn primary"
+                target="_blank"
+                rel="noopener"
+                href="https://wa.me/59167630283?text=Hola%2C%20quiero%20consultar%20sobre%20LIBRING-C"
+            >
+                Escribir por WhatsApp
+            </a>
+        </div>
+
+        <div class="panel">
+            <h3>TikTok</h3>
+            <p>Síguenos como <b>@libringc</b> para ver novedades y recomendaciones.</p>
+
+            <a
+                class="btn gold"
+                target="_blank"
+                rel="noopener"
+                href="https://www.tiktok.com/@libringc"
+            >
+                Visitar TikTok
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- COMENTARIOS -->
+<section id="opiniones">
+    <h2 class="heading">Comentarios, sugerencias y quejas</h2>
+
+    <p class="sub">
+        Los mensajes se muestran en esta página mientras esté abierta;
+        no se guardan en un servidor.
+    </p>
+
+    <div class="panel" style="max-width:800px;margin:auto">
+        <form id="reviewform">
+            <div class="formgrid">
+                <div>
+                    <label for="rname">Nombre (opcional)</label>
+                    <input id="rname" maxlength="60">
+                </div>
+
+                <div>
+                    <label for="rtype">Tipo</label>
+                    <select id="rtype">
+                        <option>Comentario</option>
+                        <option>Sugerencia</option>
+                        <option>Queja</option>
+                    </select>
+                </div>
+
+                <div class="full">
+                    <label for="message">Mensaje *</label>
+                    <textarea id="message" required maxlength="600" rows="3"></textarea>
+                </div>
+            </div>
+
+            <p>
+                <button class="primary" type="submit">
+                    Publicar comentario
+                </button>
+            </p>
+        </form>
+
+        <div id="reviews"></div>
+    </div>
+</section>
+
+</main>
+
+<footer>
+    <b>LIBRING-C</b>
+    <p>Tu espacio para descubrir nuevas lecturas.</p>
+
+    <p>
+        <a target="_blank" rel="noopener" href="https://wa.me/59167630283">WhatsApp</a>
+        ·
+        <a target="_blank" rel="noopener" href="https://www.tiktok.com/@libringc">TikTok @libringc</a>
+    </p>
+
+    <small>© <span id="year"></span> LIBRING-C</small>
+</footer>
+
+<a
+    class="float"
+    target="_blank"
+    rel="noopener"
+    href="https://wa.me/59167630283?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20LIBRING-C"
+>
+    WhatsApp
+</a>
+
+<!-- LA PARTE 2 CONTINÚA AQUÍ, ANTES DE </body> -->
+<script>
+/* =========================================
+   LIBRING-C: CATÁLOGO DE LIBROS
+   Cambia imagen: "imagenes/portada.jpg"
+   Cambia pdf: "libros/nombre.pdf"
+========================================= */
+
+const libros = [
+    {
+        id: 1,
+        titulo: "Marianela",
+        autor: "Benito Pérez Galdós",
+        genero: "Novela",
+        precio: 30,
+        imagen: "marianela.jpg",
+        pdf: "libros/Marianela(1).pdf",
+        descripcion: "Una novela sobre el cariño, la bondad y la forma en que vemos a los demás."
+    },
+    {
+        id: 2,
+        titulo: "Don Quijote de la Mancha",
+        autor: "Miguel de Cervantes",
+        genero: "Novela",
+        precio: 35,
+        imagen: "quijote.jpg",
+        pdf: "libros/Don-Quijote.pdf",
+        descripcion: "Las aventuras de Don Quijote y su fiel compañero Sancho Panza."
+    },
+    {
+        id: 3,
+        titulo: "La metamorfosis",
+        autor: "Franz Kafka",
+        genero: "Novela",
+        precio: 25,
+        imagen: "meta.jpg",
+        pdf: "libros/La-metamorfosis.pdf",
+        descripcion: "Una historia sobre los cambios, la familia y la soledad."
+    },
+
+    {
+        id: 4,
+        titulo: "Orgullo y prejuicio",
+        autor: "Jane Austen",
+        genero: "Romance",
+        precio: 30,
+        imagen: "orgullo.jpg",
+        pdf: "orgullo-y-prejuicio.pdf",
+        descripcion: "Una historia de amor, decisiones y diferencias sociales."
+    },
+    {
+        id: 5,
+        titulo: "Romeo y Julieta",
+        autor: "William Shakespeare",
+        genero: "Romance",
+        precio: 25,
+        imagen: "romeo.jpg",
+        pdf: "libros/Romeo-y-Julieta.pdf",
+        descripcion: "Una obra clásica sobre dos jóvenes de familias enfrentadas."
+    },
+    {
+        id: 6,
+        titulo: "Jane Eyre",
+        autor: "Charlotte Brontë",
+        genero: "Romance",
+        precio: 30,
+        imagen: "jana.jpg",
+        pdf: "libros/Jane-Eyre.pdf",
+        descripcion: "La vida de una joven que busca independencia y afecto."
+    },
+
+    {
+        id: 7,
+        titulo: "El sabueso de los Baskerville",
+        autor: "Arthur Conan Doyle",
+        genero: "Misterio",
+        precio: 30,
+        imagen: "sabueso.jpg",
+        pdf: "libros/El-sabueso.pdf",
+        descripcion: "Sherlock Holmes investiga un extraño misterio familiar."
+    },
+    {
+        id: 8,
+        titulo: "Los crímenes de la calle Morgue",
+        autor: "Edgar Allan Poe",
+        genero: "Misterio",
+        precio: 25,
+        imagen: "vi.jpg",
+        pdf: "libros/Crimenes-Morgue.pdf",
+        descripcion: "Un detective analiza un caso difícil mediante la lógica."
+    },
+    {
+        id: 9,
+        titulo: "El misterio de la guía de ferrocarriles",
+        autor: "Agatha Christie",
+        genero: "Misterio",
+        precio: 30,
+        imagen: "fer.jpg",
+        pdf: "libros/Misterio-ferrocarriles.pdf",
+        descripcion: "Una investigación detectivesca llena de pistas."
+    },
+
+    {
+        id: 10,
+        titulo: "La máquina del tiempo",
+        autor: "H. G. Wells",
+        genero: "Ciencia ficción",
+        precio: 30,
+        imagen: "tiempo.jpg",
+        pdf: "libros/La-maquina-del-tiempo.pdf",
+        descripcion: "Un viajero explora el futuro mediante una máquina extraordinaria."
+    },
+    {
+        id: 11,
+        titulo: "La guerra de los mundos",
+        autor: "H. G. Wells",
+        genero: "Ciencia ficción",
+        precio: 35,
+        imagen: "mun.jpg",
+        pdf: "libros/La-guerra-de-los-mundos.pdf",
+        descripcion: "Una novela clásica sobre una invasión extraterrestre."
+    },
+    {
+        id: 12,
+        titulo: "Veinte mil leguas de viaje submarino",
+        autor: "Julio Verne",
+        genero: "Ciencia ficción",
+        precio: 35,
+        imagen: "mil.jpg",
+        pdf: "libros/Veinte-mil-leguas.pdf",
+        descripcion: "Una aventura de exploración por las profundidades del océano."
+    },
+
+    {
+        id: 13,
+        titulo: "El hobbit",
+        autor: "J. R. R. Tolkien",
+        genero: "Fantasía",
+        precio: 35,
+        imagen: "ho.jpg",
+        pdf: ".pdf",
+        descripcion: "Bilbo Bolsón emprende un viaje lleno de aventuras."
+    },
+    {
+        id: 14,
+        titulo: "Alicia en el país de las maravillas",
+        autor: "Lewis Carroll",
+        genero: "Fantasía",
+        precio: 25,
+        imagen: "alicia.jpg",
+        pdf: "libros/Alicia.pdf",
+        descripcion: "Alicia descubre un mundo fantástico lleno de personajes curiosos."
+    },
+    {
+        id: 15,
+        titulo: "El maravilloso mago de Oz",
+        autor: "L. Frank Baum",
+        genero: "Fantasía",
+        precio: 25,
+        imagen: "oz.jpg",
+        pdf: "libros/Mago-de-Oz.pdf",
+        descripcion: "Dorothy vive una aventura extraordinaria en una tierra mágica."
+    },
+
+    {
+        id: 16,
+        titulo: "Historia de Bolivia",
+        autor: "Texto de historia",
+        genero: "Historia",
+        precio: 30,
+        imagen: "boli.jpg",
+        pdf: "libros/Historia-de-Bolivia.pdf",
+        descripcion: "Espacio para un libro de historia boliviana que tú selecciones."
+    },
+    {
+        id: 17,
+        titulo: "Historia universal",
+        autor: "Texto de historia",
+        genero: "Historia",
+        precio: 35,
+        imagen: "uni.jpg",
+        pdf: "libros/Historia-universal.pdf",
+        descripcion: "Una introducción a las civilizaciones y acontecimientos históricos."
+    },
+    {
+        id: 18,
+        titulo: "La historia de la Guerra del Chaco",
+        autor: "Texto histórico",
+        genero: "Historia",
+        precio: 30,
+        imagen: "cha.jpg",
+        pdf: "libros/Guerra-del-Chaco.pdf",
+        descripcion: "Espacio para un texto sobre este importante acontecimiento boliviano."
+    },
+
+    {
+        id: 19,
+        titulo: "El arte de aprender",
+        autor: "Libro educativo",
+        genero: "Educación",
+        precio: 25,
+        imagen: "am.jpg",
+        pdf: "libros/El-arte-de-aprender.pdf",
+        descripcion: "Lectura de apoyo para desarrollar hábitos de estudio."
+    },
+    {
+        id: 20,
+        titulo: "Lecturas fáciles con ejercicios",
+        autor: "Lawrence A. Wilkins",
+        genero: "Educación",
+        precio: 30,
+        imagen: "ape.jpg",
+        pdf: "libros/Lecturas-faciles.pdf",
+        descripcion: "Material de lectura y ejercicios para practicar la comprensión."
+    },
+    {
+        id: 21,
+        titulo: "Matemáticas básicas",
+        autor: "Libro educativo",
+        genero: "Educación",
+        precio: 30,
+        imagen: "mate.jpg",
+        pdf: "libros/Matematicas-basicas.pdf",
+        descripcion: "Espacio para un libro de apoyo con conceptos y ejercicios."
+    },
+
+    {
+        id: 22,
+        titulo: "Frankenstein",
+        autor: "Mary Shelley",
+        genero: "Terror",
+        precio: 30,
+        imagen: "frank.jpg",
+        pdf: "libros/Frankenstein.pdf",
+        descripcion: "Una novela gótica sobre la ciencia y sus consecuencias."
+    },
+    {
+        id: 23,
+        titulo: "Drácula",
+        autor: "Bram Stoker",
+        genero: "Terror",
+        precio: 30,
+        imagen: "dra.jpg",
+        pdf: "libros/Dracula.pdf",
+        descripcion: "Una historia clásica de misterio y terror gótico."
+    },
+    {
+        id: 24,
+        titulo: "El gato negro",
+        autor: "Edgar Allan Poe",
+        genero: "Terror",
+        precio: 20,
+        imagen: "neg.jpg",
+        pdf: "libros.pdf",
+        descripcion: "Un relato oscuro de suspense y terror psicológico."
+    }
+];
+
+
+/* =========================================
+   MOSTRAR LOS LIBROS Y SUS PORTADAS
+========================================= */
+
+const booksContainer = document.getElementById("books");
+const searchInput = document.getElementById("search");
+const genreSelect = document.getElementById("genre");
+
+function renderBooks() {
+    const texto = searchInput.value.toLowerCase().trim();
+    const genero = genreSelect.value;
+
+    const resultados = libros.filter(libro => {
+        const coincideTexto =
+            libro.titulo.toLowerCase().includes(texto) ||
+            libro.autor.toLowerCase().includes(texto) ||
+            libro.genero.toLowerCase().includes(texto);
+
+        const coincideGenero =
+            !genero || libro.genero === genero;
+
+        return coincideTexto && coincideGenero;
+    });
+
+    booksContainer.innerHTML = "";
+
+    if (resultados.length === 0) {
+        booksContainer.innerHTML =
+            '<div class="empty">No se encontraron libros.</div>';
+        return;
+    }
+
+    resultados.forEach(libro => {
+        const tarjeta = document.createElement("article");
+        tarjeta.className = "book";
+
+        const portada = document.createElement("div");
+        portada.className = "cover";
+
+        if (libro.imagen) {
+            const img = document.createElement("img");
+            img.src = libro.imagen;
+            img.alt = "Portada de " + libro.titulo;
+            img.loading = "lazy";
+
+            img.onerror = function() {
+                portada.innerHTML = "📚";
+                portada.setAttribute(
+                    "aria-label",
+                    "Agrega la portada de " + libro.titulo
+                );
+            };
+
+            portada.appendChild(img);
+        } else {
+            portada.textContent = "📚";
+        }
+
+        const info = document.createElement("div");
+        info.className = "info";
+
+        const titulo = document.createElement("h3");
+        titulo.textContent = libro.titulo;
+
+        const autor = document.createElement("p");
+        autor.className = "muted";
+        autor.textContent = "Autor: " + libro.autor;
+
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = libro.genero;
+
+        const descripcion = document.createElement("p");
+        descripcion.className = "description";
+        descripcion.textContent = libro.descripcion;
+
+        const precio = document.createElement("p");
+        precio.className = "price";
+        precio.textContent = "Bs " + libro.precio;
+
+        const acciones = document.createElement("div");
+        acciones.className = "actions";
+
+        const btnPDF = document.createElement("button");
+        btnPDF.className = "light";
+        btnPDF.textContent = "📖 Leer PDF";
+        btnPDF.addEventListener("click", () => readBook(libro.id));
+
+        const btnAgregar = document.createElement("button");
+        btnAgregar.className = "primary";
+        btnAgregar.textContent = "🛒 Agregar";
+        btnAgregar.addEventListener("click", () => addToCart(libro.id));
+
+        acciones.append(btnPDF, btnAgregar);
+        info.append(titulo, autor, tag, descripcion, precio, acciones);
+        tarjeta.append(portada, info);
+        booksContainer.appendChild(tarjeta);
+    });
+}
+
+searchInput.addEventListener("input", renderBooks);
+genreSelect.addEventListener("change", renderBooks);
+
+document.querySelectorAll(".genres a").forEach(enlace => {
+    enlace.addEventListener("click", () => {
+        genreSelect.value = enlace.dataset.g || "";
+        renderBooks();
+    });
+});
+
+
+/* =========================================
+   ABRIR EL PDF DEL LIBRO
+========================================= */
+
+function readBook(id) {
+    const libro = libros.find(item => item.id === id);
+
+    if (!libro) {
+        alert("No se encontró el libro.");
+        return;
+    }
+
+    if (!libro.pdf) {
+        alert("Todavía no agregaste el PDF de este libro.");
+        return;
+    }
+
+    window.open(libro.pdf, "_blank", "noopener");
+}
+
+
+/* =========================================
+   CARRITO DE COMPRAS
+========================================= */
+
+let carrito = [];
+
+function addToCart(id) {
+    const libro = libros.find(item => item.id === id);
+
+    if (!libro) return;
+
+    const existente = carrito.find(item => item.id === id);
+
+    if (existente) {
+        existente.cantidad++;
+    } else {
+        carrito.push({
+            id: libro.id,
+            titulo: libro.titulo,
+            precio: libro.precio,
+            cantidad: 1
+        });
+    }
+
+    renderCart();
+    document.getElementById("carrito").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+function removeFromCart(id) {
+    carrito = carrito.filter(item => item.id !== id);
+    renderCart();
+}
+
+function renderCart() {
+    const contenedor = document.getElementById("cartitems");
+    const totalElement = document.getElementById("total");
+    const countElement = document.getElementById("count");
+    const hint = document.getElementById("hint");
+
+    contenedor.innerHTML = "";
+
+    const unidades = carrito.reduce(
+        (suma, item) => suma + item.cantidad, 0
+    );
+
+    const total = carrito.reduce(
+        (suma, item) => suma + item.precio * item.cantidad, 0
+    );
+
+    countElement.textContent = unidades;
+    totalElement.textContent = "Bs " + total.toFixed(2);
+
+    if (carrito.length === 0) {
+        contenedor.innerHTML =
+            '<p class="muted">Todavía no agregaste libros.</p>';
+        hint.textContent = "Agrega al menos un libro al carrito.";
+        return;
+    }
+
+    hint.textContent = "Revisa los datos antes de enviar tu pedido.";
+
+    carrito.forEach(item => {
+        const fila = document.createElement("div");
+        fila.className = "cartrow";
+
+        const descripcion = document.createElement("div");
+        descripcion.textContent =
+            item.titulo + " × " + item.cantidad +
+            " — Bs " + (item.precio * item.cantidad).toFixed(2);
+
+        const quitar = document.createElement("button");
+        quitar.className = "danger";
+        quitar.textContent = "Quitar";
+        quitar.type = "button";
+        quitar.addEventListener("click", () => removeFromCart(item.id));
+
+        fila.append(descripcion, quitar);
+        contenedor.appendChild(fila);
+    });
+}
+
+document.getElementById("clear").addEventListener("click", () => {
+    carrito = [];
+    renderCart();
+});
+
+
+/* =========================================
+   PEDIDOS Y PAGO
+========================================= */
+
+const orderForm = document.getElementById("order");
+const paymentSelect = document.getElementById("payment");
+const qrPanel = document.getElementById("qrpanel");
+
+paymentSelect.addEventListener("change", () => {
+    qrPanel.hidden = paymentSelect.value !== "QR";
+});
+
+orderForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    if (carrito.length === 0) {
+        alert("Agrega al menos un libro antes de realizar el pedido.");
+        return;
+    }
+
+    const nombre = document.getElementById("name").value.trim();
+    const telefono = document.getElementById("phone").value.trim();
+    const correo = document.getElementById("email").value.trim();
+    const pago = paymentSelect.value;
+    const nota = document.getElementById("note").value.trim();
+
+    const total = carrito.reduce(
+        (suma, item) => suma + item.precio * item.cantidad, 0
+    );
+
+    const detalle = carrito.map(item =>
+        "- " + item.titulo +
+        " x" + item.cantidad +
+        " = Bs " + (item.precio * item.cantidad).toFixed(2)
+    ).join("\n");
+
+    const mensaje =
+        "PEDIDO LIBRING-C\n\n" +
+        "Cliente: " + nombre + "\n" +
+        "Teléfono: " + (telefono || "No indicado") + "\n" +
+        "Correo: " + (correo || "No indicado") + "\n\n" +
+        "LIBROS:\n" + detalle + "\n\n" +
+        "TOTAL: Bs " + total.toFixed(2) + "\n" +
+        "Método de pago: " + pago + "\n" +
+        "Nota: " + (nota || "Ninguna");
+
+    if (pago === "QR") {
+        qrPanel.hidden = false;
+    }
+
+    const url =
+        "https://wa.me/59167630283?text=" +
+        encodeURIComponent(mensaje);
+
+    window.open(url, "_blank", "noopener");
+
+    alert(
+        "Se preparó tu pedido para WhatsApp. " +
+        "Revisa el mensaje y envíalo para confirmar."
+    );
+});
+
+
+/* =========================================
+   COMENTARIOS Y SUGERENCIAS
+========================================= */
+
+const reviewForm = document.getElementById("reviewform");
+const reviewsContainer = document.getElementById("reviews");
+
+reviewForm.addEventListener("submit", event => {
+    event.preventDefault();
+
+    const nombre =
+        document.getElementById("rname").value.trim() || "Visitante";
+
+    const tipo = document.getElementById("rtype").value;
+    const mensaje = document.getElementById("message").value.trim();
+
+    if (!mensaje) {
+        alert("Escribe tu comentario antes de publicarlo.");
+        return;
+    }
+
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "review";
+
+    const encabezado = document.createElement("strong");
+    encabezado.textContent = nombre + " — " + tipo;
+
+    const texto = document.createElement("p");
+    texto.textContent = mensaje;
+
+    tarjeta.append(encabezado, texto);
+    reviewsContainer.prepend(tarjeta);
+
+    reviewForm.reset();
+});
+
+
+/* =========================================
+   AÑO AUTOMÁTICO Y ARRANQUE
+========================================= */
+
+document.getElementById("year").textContent =
+    new Date().getFullYear();
+
+renderBooks();
+renderCart();
+</script>
+
+</body>
+</html>
